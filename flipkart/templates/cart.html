@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load cart %}
+
+{% block title %}
+Cart
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <table class="table table-light table-striped text-centre">
+        <tr>
+            <th>S. No</th>
+            <th>Product Name</th>
+            <th>Product Image</th>
+            <th>Price (Rs.)</th>
+            <th>Quantity</th>
+            <th>Sub-total</th>
+        </tr>
+        {% for c in cardtls %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <!-- take name from models.py product_table-->
+            <td>{{c.pro_name}}</td>
+            <td><img src="{{c.pro_image.url}}" alt=" " align="center" height=100></td>
+            <td>Rs. {{c.price}}/-</td>
+            <td>{{c|cartquantity:request.session.cart}}</td>
+            <td>Rs. {{c|sub_total:request.session.cart}}/-</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan=5>Total amount to be paid:</td>
+            <td>Rs. {{cardtls|payable_amount:request.session.cart}}/-</td>
+        </tr>
+        <tr>
+            <td colspan=6>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkout">Checkout</button></td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+<div class="modal fade" id="checkout" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Checkout</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{% url "checkout" %}" method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <label for="inputEmail3" class="col-sm-2 col-form-label">Address</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputEmail3" name="address">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="inputPassword3" class="col-sm-2 col-form-label">Mobile</label>
+                  <div class="col-sm-10">
+                    <input type="number" class="form-control" id="mbl" name="mbl">
+                  </div>
+                </div>
+
+
+                <button type="submit" class="btn btn-primary">Checkout</button>
+              </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+
+{% endblock content %} 
